@@ -40,3 +40,10 @@ jobs:
         with:
           name: winlator-bionic-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          path: app/build/outputs/apk/debug/app-debug.apk
+          name: winlator-bionic-nightly
+          tag_name: nightly
