@@ -20,13 +20,38 @@ jobs:
     steps:
       - name: Get current date
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-      - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          repository: Pipetto-crypto/winlator
-          ref: winlator_bionic
-          submodules: recursive
 
+      - name: Clone source repository
+        run: |
+          git clone \
+          --recursive-submodules \
+          --single-branch \
+          --branch winlator_bionic \
+          https://github.com/Pipetto-crypto/Winlator
+
+      - name: Clone build repository
+        run: git clone https://github.com/Alexoqool/winlator-bionic-build
+
+      - name: Get current source commit SHA and changelog
+        run: |
+          cd winlator
+          if [ -f ../winlator-bionic-build/commit_sha.txt ]; then
+            echo "CHANGELOG=$(git log $(cat ../winlator-bionic-build/commit_sha.txt)..HEAD)" >> $GITHUB_ENV
+            git rev-parse HEAD > ../winlator-bionic-build/commit_sha.txt
+          else
+            git rev-parse HEAD > ../winlator-bionic-build/commit_sha.txt
+            echo "CHANGELOG=$(git log $(cat ../winlator-bionic-build/commit_sha.txt)..HEAD)" >> $GITHUB_ENV
+          fi
+
+      - name: Update last build commit SHA
+        run: |
+          cd winlator-bionic-build
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add commit_sha.txt
+          git commit -m "Update last build commit SHA"
+          git push
+          
       - name: Setup JDK
         uses: actions/setup-java@v5
         with:
@@ -35,20 +60,19 @@ jobs:
           cache: 'gradle'
 
       - name: Set gradlew permissions
-        run: chmod +x gradlew
+        run: |
+          cd winlator
+          chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew assembleDebug
+        run: |
+          cd winlator
+          ./gradlew assembleDebug
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk/debug/app-debug.apk
+          body: ${{ env.CHANGELOG }}
+          files: winlator/app/build/outputs/apk/debug/app-debug.apk
           name: winlator-bionic-${{ env.DATE }}
           tag_name: ${{ env.DATE }}
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: winlator-bionic-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
