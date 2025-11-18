@@ -27,7 +27,7 @@ jobs:
           --recursive \
           --single-branch \
           --branch winlator_bionic \
-          https://github.com/Pipetto-crypto/Winlator
+          https://github.com/Pipetto-crypto/winlator
 
       - name: Clone build repository
         run: git clone https://github.com/Alexoqool/winlator-bionic-build
