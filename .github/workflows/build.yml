@@ -51,7 +51,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add commit_sha.txt
-          git commit -m "Update last build commit SHA"
+          git commit -m "Update last build commit SHA" || true
           git push
           
       - name: Setup JDK
