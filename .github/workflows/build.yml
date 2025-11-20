@@ -38,11 +38,11 @@ jobs:
         run: |
           cd winlator
           if [ -f ../build/commit_sha.txt ]; then
-            echo "CHANGELOG=$(git log $(cat ../build/commit_sha.txt)..HEAD)" >> $GITHUB_ENV
+            echo "CHANGELOG=$(git log -pretty:format=%s $(cat ../build/commit_sha.txt)..HEAD)" >> $GITHUB_ENV
             git rev-parse HEAD > ../build/commit_sha.txt
           else
             git rev-parse HEAD > ../build/commit_sha.txt
-            echo "CHANGELOG=$(git log $(cat ../build/commit_sha.txt)..HEAD)" >> $GITHUB_ENV
+            echo "CHANGELOG=$(git log -pretty:format=%s $(cat ../build/commit_sha.txt)..HEAD)" >> $GITHUB_ENV
           fi
 
       - name: Update last build commit SHA
