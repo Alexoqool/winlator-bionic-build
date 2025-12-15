@@ -57,7 +57,7 @@ jobs:
       - name: Remove sharedUserId
         run: |
           cd winlator/app/src/main
-          sed 's/android:sharedUserId="com.termux"//' AndroidManifest.xml
+          sed -i 's/android:sharedUserId="com.termux"//' AndroidManifest.xml
           
       - name: Setup JDK
         uses: actions/setup-java@v5
