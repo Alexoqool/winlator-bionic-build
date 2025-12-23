@@ -34,26 +34,6 @@ jobs:
         with:
           path: build
 
-      - name: Get current source commit SHA and changelog
-        run: |
-          cd winlator
-          if [ -f ../build/commit_sha.txt ]; then
-            echo "$(git log --pretty=format:%s $(cat ../build/commit_sha.txt)..HEAD)" > CHANGELOG.txt
-            git rev-parse HEAD > ../build/commit_sha.txt
-          else
-            git rev-parse HEAD > ../build/commit_sha.txt
-            echo "$(git log --pretty=format:%s $(cat ../build/commit_sha.txt)..HEAD)" > CHANGELOG.txt
-          fi
-
-      - name: Update last build commit SHA
-        run: |
-          cd build
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add commit_sha.txt
-          git commit -m "Update last build commit SHA" || true
-          git push
-
       - name: Remove sharedUserId
         run: |
           cd winlator/app/src/main
@@ -75,6 +55,26 @@ jobs:
         run: |
           cd winlator
           ./gradlew assembleDebug
+
+      - name: Get current source commit SHA and changelog
+        run: |
+          cd winlator
+          if [ -f ../build/commit_sha.txt ]; then
+            echo "$(git log --pretty=format:%s $(cat ../build/commit_sha.txt)..HEAD)" > CHANGELOG.txt
+            git rev-parse HEAD > ../build/commit_sha.txt
+          else
+            git rev-parse HEAD > ../build/commit_sha.txt
+            echo "$(git log --pretty=format:%s $(cat ../build/commit_sha.txt)..HEAD)" > CHANGELOG.txt
+          fi
+
+      - name: Update last build commit SHA
+        run: |
+          cd build
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add commit_sha.txt
+          git commit -m "Update last build commit SHA" || true
+          git push
 
       - name: Release
         uses: softprops/action-gh-release@v2
