@@ -30,7 +30,7 @@ jobs:
           https://github.com/Pipetto-crypto/winlator
 
       - name: Checkout build repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: build
 
